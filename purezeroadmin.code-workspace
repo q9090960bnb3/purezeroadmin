@@ -4,6 +4,9 @@
 			"path": "front-end"
 		},
 		{
+			"path": "back-end"
+		},
+		{
 			"name": "root",
 			"path": "."
 		}
