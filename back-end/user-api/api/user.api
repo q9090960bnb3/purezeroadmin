@@ -1,0 +1,90 @@
+syntax = "v1"
+
+info (
+	title: "q9090960bnb3"
+	desc:  "haha"
+	date:  "2024-10-31"
+)
+
+import "../../base-api/base.api"
+
+type UserLoginData {
+	Avatar       string   `json:"avatar"`
+	Username     string   `json:"username"`
+	Nickname     string   `json:"nickname"`
+	Roles        []string `json:"roles"`
+	Permissions  []string `json:"permissions"`
+	AccessToken  string   `json:"accessToken"`
+	RefreshToken string   `json:"refreshToken"`
+	Expires      string   `json:"expires"`
+}
+
+type (
+	UserLoginReq {
+		UserName string `json:"username"`
+		Password string `json:"password"`
+	}
+	UserLoginResp {
+		Base
+		Data UserLoginData `json:"data"`
+	}
+)
+
+service user-api {
+	@doc "用户登录"
+	@handler userLogin
+	post /login (UserLoginReq) returns (UserLoginResp)
+}
+
+type UserRefreshTokenData {
+	AccessToken  string `json:"accessToken"`
+	RefreshToken string `json:"refreshToken"`
+	Expires      string `json:"expires"`
+}
+
+type (
+	UserRefreshTokenReq {
+		RefreshToken string `json:"refreshToken"`
+	}
+	UserRefreshTokenResp {
+		Base
+		Data UserRefreshTokenData `json:"data"`
+	}
+)
+
+service user-api {
+	@doc "刷新token"
+	@handler UserRefreshToken
+	post /refresh-token (UserRefreshTokenReq) returns (UserRefreshTokenResp)
+}
+
+type RouterData {
+	Path      string       `json:"path"`
+	Name      string       `json:"name,omitempty"`
+	Component string       `json:"component,omitemty"`
+	Meta      Meta         `json:"meta"`
+	Children  []RouterData `json:"children,omitempty"`
+}
+
+type Meta {
+	Title string   `json:"title"`
+	Icon  string   `json:"icon,omitempty"`
+	Rank  int64    `json:"rank,omitempty"`
+	Roles []string `json:"roles,omitempty"`
+	Auths []string `json:"auths,omitempty"`
+}
+
+type (
+	UserRouterReq  {}
+	UserRouterResp {
+		Base
+		Data []RouterData `json:"data"`
+	}
+)
+
+service user-api {
+	@doc "获取路由"
+	@handler userRouter
+	get /get-async-routes (UserRouterReq) returns (UserRouterResp)
+}
+

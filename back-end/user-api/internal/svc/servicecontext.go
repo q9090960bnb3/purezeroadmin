@@ -1,7 +1,7 @@
 package svc
 
 import (
-	"backend/hello-api/internal/config"
+	"backend/user-api/internal/config"
 )
 
 type ServiceContext struct {
