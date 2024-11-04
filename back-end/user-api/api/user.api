@@ -6,27 +6,20 @@ info (
 	date:  "2024-10-31"
 )
 
-import "../../base-api/base.api"
-
-type UserLoginData {
-	Avatar       string   `json:"avatar"`
-	Username     string   `json:"username"`
-	Nickname     string   `json:"nickname"`
-	Roles        []string `json:"roles"`
-	Permissions  []string `json:"permissions"`
-	AccessToken  string   `json:"accessToken"`
-	RefreshToken string   `json:"refreshToken"`
-	Expires      string   `json:"expires"`
-}
-
 type (
 	UserLoginReq {
 		UserName string `json:"username"`
 		Password string `json:"password"`
 	}
 	UserLoginResp {
-		Base
-		Data UserLoginData `json:"data"`
+		Avatar       string   `json:"avatar"`
+		Username     string   `json:"username"`
+		Nickname     string   `json:"nickname"`
+		Roles        []string `json:"roles"`
+		Permissions  []string `json:"permissions"`
+		AccessToken  string   `json:"accessToken"`
+		RefreshToken string   `json:"refreshToken"`
+		Expires      string   `json:"expires"`
 	}
 )
 
@@ -36,19 +29,14 @@ service user-api {
 	post /api/login (UserLoginReq) returns (UserLoginResp)
 }
 
-type UserRefreshTokenData {
-	AccessToken  string `json:"accessToken"`
-	RefreshToken string `json:"refreshToken"`
-	Expires      string `json:"expires"`
-}
-
 type (
 	UserRefreshTokenReq {
 		RefreshToken string `json:"refreshToken"`
 	}
 	UserRefreshTokenResp {
-		Base
-		Data UserRefreshTokenData `json:"data"`
+		AccessToken  string `json:"accessToken"`
+		RefreshToken string `json:"refreshToken"`
+		Expires      string `json:"expires"`
 	}
 )
 
@@ -76,15 +64,11 @@ type Meta {
 
 type (
 	UserRouterReq  {}
-	UserRouterResp {
-		Base
-		Data []RouterData `json:"data"`
-	}
 )
 
 service user-api {
 	@doc "获取路由"
 	@handler userRouter
-	get /api/get-async-routes (UserRouterReq) returns (UserRouterResp)
+	get /api/get-async-routes (UserRouterReq) returns ([]RouterData)
 }
 

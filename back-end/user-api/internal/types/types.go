@@ -3,10 +3,6 @@
 
 package types
 
-type Base struct {
-	Success bool `json:"success"`
-}
-
 type Meta struct {
 	Title string   `json:"title"`
 	Icon  string   `json:"icon,omitempty"`
@@ -23,7 +19,12 @@ type RouterData struct {
 	Children  []RouterData `json:"children,omitempty"`
 }
 
-type UserLoginData struct {
+type UserLoginReq struct {
+	UserName string `json:"username"`
+	Password string `json:"password"`
+}
+
+type UserLoginResp struct {
 	Avatar       string   `json:"avatar"`
 	Username     string   `json:"username"`
 	Nickname     string   `json:"nickname"`
@@ -34,35 +35,15 @@ type UserLoginData struct {
 	Expires      string   `json:"expires"`
 }
 
-type UserLoginReq struct {
-	UserName string `json:"username"`
-	Password string `json:"password"`
-}
-
-type UserLoginResp struct {
-	Base
-	Data UserLoginData `json:"data"`
-}
-
-type UserRefreshTokenData struct {
-	AccessToken  string `json:"accessToken"`
-	RefreshToken string `json:"refreshToken"`
-	Expires      string `json:"expires"`
-}
-
 type UserRefreshTokenReq struct {
 	RefreshToken string `json:"refreshToken"`
 }
 
 type UserRefreshTokenResp struct {
-	Base
-	Data UserRefreshTokenData `json:"data"`
+	AccessToken  string `json:"accessToken"`
+	RefreshToken string `json:"refreshToken"`
+	Expires      string `json:"expires"`
 }
 
 type UserRouterReq struct {
-}
-
-type UserRouterResp struct {
-	Base
-	Data []RouterData `json:"data"`
 }

@@ -12,3 +12,27 @@ traceparent: 00-2b7349a6baee025ebb7e545d161581ec-704290df31fbe0fb-00
 date: Mon, 04 Nov 2024 08:22:18 GMT
 content-length: 292
 connection: close
+###
+POST http://localhost:8888/api/refresh-token HTTP/1.1
+Content-Type: application/json
+
+{
+    // "refreshToken": "mytest"
+    "refreshToken": ""
+}
+
+HTTP/1.1 200  - OK
+content-type: application/json; charset=utf-8
+traceparent: 00-7fb9d72d83adc9362d7323cdfc9559c8-6aab7556332ef70f-00
+date: Mon, 04 Nov 2024 09:47:07 GMT
+content-length: 78
+connection: close
+###
+GET http://localhost:8888/api/get-async-routes HTTP/1.1
+
+HTTP/1.1 200  - OK
+content-type: application/json; charset=utf-8
+traceparent: 00-675157b66a9d5df4063946f14a4c58f9-e5259a53fccc8d81-00
+date: Mon, 04 Nov 2024 09:48:14 GMT
+content-length: 656
+connection: close

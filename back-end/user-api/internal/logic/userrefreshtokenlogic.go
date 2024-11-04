@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"errors"
 
 	"backend/user-api/internal/svc"
 	"backend/user-api/internal/types"
@@ -27,15 +28,10 @@ func NewUserRefreshTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 func (l *UserRefreshTokenLogic) UserRefreshToken(req *types.UserRefreshTokenReq) (resp *types.UserRefreshTokenResp, err error) {
 	if req.RefreshToken != "" {
 		return &types.UserRefreshTokenResp{
-			Base: types.Base{
-				Success: true,
-			},
-			Data: types.UserRefreshTokenData{
-				AccessToken:  "eyJhbGciOiJIUzUxMiJ9.newAdmin",
-				RefreshToken: "eyJhbGciOiJIUzUxMiJ9.newAdminRefresh",
-				Expires:      "2030/10/30 23:59:59",
-			},
+			AccessToken:  "eyJhbGciOiJIUzUxMiJ9.newAdmin",
+			RefreshToken: "eyJhbGciOiJIUzUxMiJ9.newAdminRefresh",
+			Expires:      "2030/10/30 23:59:59",
 		}, nil
 	}
-	return &types.UserRefreshTokenResp{}, nil
+	return nil, errors.New("refresh token error")
 }
