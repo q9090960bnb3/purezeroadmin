@@ -31,9 +31,9 @@ func (l *UserRefreshTokenLogic) UserRefreshToken(req *types.UserRefreshTokenReq)
 				Success: true,
 			},
 			Data: types.UserRefreshTokenData{
-				AccessToken:  "",
-				RefreshToken: "",
-				Expires:      "",
+				AccessToken:  "eyJhbGciOiJIUzUxMiJ9.newAdmin",
+				RefreshToken: "eyJhbGciOiJIUzUxMiJ9.newAdminRefresh",
+				Expires:      "2030/10/30 23:59:59",
 			},
 		}, nil
 	}
