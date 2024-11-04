@@ -33,7 +33,7 @@ type (
 service user-api {
 	@doc "用户登录"
 	@handler userLogin
-	post /login (UserLoginReq) returns (UserLoginResp)
+	post /api/login (UserLoginReq) returns (UserLoginResp)
 }
 
 type UserRefreshTokenData {
@@ -55,7 +55,7 @@ type (
 service user-api {
 	@doc "刷新token"
 	@handler UserRefreshToken
-	post /refresh-token (UserRefreshTokenReq) returns (UserRefreshTokenResp)
+	post /api/refresh-token (UserRefreshTokenReq) returns (UserRefreshTokenResp)
 }
 
 type RouterData {
@@ -85,6 +85,6 @@ type (
 service user-api {
 	@doc "获取路由"
 	@handler userRouter
-	get /get-async-routes (UserRouterReq) returns (UserRouterResp)
+	get /api/get-async-routes (UserRouterReq) returns (UserRouterResp)
 }
 

@@ -17,7 +17,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			{
 				// 用户登录
 				Method:  http.MethodPost,
-				Path:    "/login",
+				Path:    "/api/login",
 				Handler: userLoginHandler(serverCtx),
 			},
 		},
@@ -28,7 +28,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			{
 				// 刷新token
 				Method:  http.MethodPost,
-				Path:    "/refresh-token",
+				Path:    "/api/refresh-token",
 				Handler: UserRefreshTokenHandler(serverCtx),
 			},
 		},
@@ -39,7 +39,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			{
 				// 获取路由
 				Method:  http.MethodGet,
-				Path:    "/get-async-routes",
+				Path:    "/api/get-async-routes",
 				Handler: userRouterHandler(serverCtx),
 			},
 		},
