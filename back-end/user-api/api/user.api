@@ -52,6 +52,9 @@ type (
 	}
 )
 
+@server (
+	jwt: Auth // 开启 jwt 认证
+)
 service user-api {
 	@doc "刷新token"
 	@handler UserRefreshToken
@@ -82,6 +85,9 @@ type (
 	}
 )
 
+@server (
+	jwt: Auth // 开启 jwt 认证
+)
 service user-api {
 	@doc "获取路由"
 	@handler userRouter
