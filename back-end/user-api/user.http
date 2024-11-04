@@ -1,0 +1,14 @@
+POST http://localhost:8888/api/login HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "admin",
+    "password": "admin123"
+}
+
+HTTP/1.1 200  - OK
+content-type: application/json; charset=utf-8
+traceparent: 00-2b7349a6baee025ebb7e545d161581ec-704290df31fbe0fb-00
+date: Mon, 04 Nov 2024 08:22:18 GMT
+content-length: 292
+connection: close

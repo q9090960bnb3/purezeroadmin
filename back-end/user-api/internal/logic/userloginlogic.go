@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"errors"
 
 	"backend/user-api/internal/svc"
 	"backend/user-api/internal/types"
@@ -25,7 +26,7 @@ func NewUserLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserLog
 }
 
 func (l *UserLoginLogic) UserLogin(req *types.UserLoginReq) (resp *types.UserLoginResp, err error) {
-	if req.UserName == "admin" {
+	if req.UserName == "admin" && req.Password == "admin123" {
 		return &types.UserLoginResp{
 			Base: types.Base{
 				Success: true,
@@ -43,19 +44,23 @@ func (l *UserLoginLogic) UserLogin(req *types.UserLoginReq) (resp *types.UserLog
 		}, nil
 	}
 
-	return &types.UserLoginResp{
-		Base: types.Base{
-			Success: true,
-		},
-		Data: types.UserLoginData{
-			Avatar:       "https://avatars.githubusercontent.com/u/52823142",
-			Username:     "common",
-			Nickname:     "小林",
-			Roles:        []string{"common"},
-			Permissions:  []string{"permission:btn:add", "permission:btn:edit"},
-			AccessToken:  "eyJhbGciOiJIUzUxMiJ9.common",
-			RefreshToken: "eyJhbGciOiJIUzUxMiJ9.commonRefresh",
-			Expires:      "2030/10/30 00:00:00",
-		},
-	}, nil
+	if req.UserName == "common" && req.Password == "123456" {
+		return &types.UserLoginResp{
+			Base: types.Base{
+				Success: true,
+			},
+			Data: types.UserLoginData{
+				Avatar:       "https://avatars.githubusercontent.com/u/52823142",
+				Username:     "common",
+				Nickname:     "小林",
+				Roles:        []string{"common"},
+				Permissions:  []string{"permission:btn:add", "permission:btn:edit"},
+				AccessToken:  "eyJhbGciOiJIUzUxMiJ9.common",
+				RefreshToken: "eyJhbGciOiJIUzUxMiJ9.commonRefresh",
+				Expires:      "2030/10/30 00:00:00",
+			},
+		}, nil
+	}
+
+	return nil, errors.New("登陆失败")
 }

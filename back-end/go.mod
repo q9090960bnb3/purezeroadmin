@@ -2,7 +2,10 @@ module backend
 
 go 1.23.0
 
-require github.com/zeromicro/go-zero v1.7.3
+require (
+	github.com/zeromicro/go-zero v1.7.3
+	github.com/zeromicro/x v0.0.0-20240408115609-8224c482b07e
+)
 
 require (
 	github.com/beorn7/perks v1.0.1 // indirect
