@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"backend/user-api/helper"
 	"backend/user-api/internal/svc"
 	"backend/user-api/internal/types"
 
@@ -25,13 +26,61 @@ func NewUserRouterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserRo
 }
 
 func (l *UserRouterLogic) UserRouter(req *types.UserRouterReq) (resp []*types.RouterData, err error) {
+	userID, err := helper.GetUserIDFromContext(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if userID == 1 {
+		return []*types.RouterData{
+			{
+				Path: "/permission/page/index",
+				Name: "PermissionPage",
+				Meta: types.Meta{
+					Title: "页面权限",
+					Roles: []string{"admin", "common"},
+				},
+			},
+			{
+				Path: "/permission/button",
+				Meta: types.Meta{
+					Title: "按钮权限",
+					Roles: []string{"admin", "common"},
+				},
+				Children: []types.RouterData{
+					{
+						Path:      "/permission/button/router",
+						Component: "permission/button/index",
+						Name:      "PermissionButtonRouter",
+						Meta: types.Meta{
+							Title: "路由返回按钮权限",
+							Auths: []string{
+								"permission:btn:add",
+								"permission:btn:edit",
+								"permission:btn:delete",
+							},
+						},
+					},
+					{
+						Path:      "/permission/button/login",
+						Component: "permission/button/perms",
+						Name:      "PermissionButtonLogin",
+						Meta: types.Meta{
+							Title: "登录返回按钮权限",
+						},
+					},
+				},
+			},
+		}, nil
+	}
+
 	return []*types.RouterData{
 		{
 			Path: "/permission/page/index",
 			Name: "PermissionPage",
 			Meta: types.Meta{
 				Title: "页面权限",
-				Roles: []string{"admin", "common"},
+				Roles: []string{"admin"},
 			},
 		},
 		{

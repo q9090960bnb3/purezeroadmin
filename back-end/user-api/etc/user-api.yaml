@@ -1,3 +1,8 @@
 Name: user-api
 Host: 0.0.0.0
 Port: 8888
+
+# jwt认证相关
+Auth:
+  AccessSecret: "purezeroadminxxx"
+  AccessExpire: 10

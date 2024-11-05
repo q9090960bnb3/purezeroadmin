@@ -2,10 +2,13 @@ package logic
 
 import (
 	"context"
-	"errors"
+	"time"
 
+	"backend/user-api/global"
+	"backend/user-api/helper"
 	"backend/user-api/internal/svc"
 	"backend/user-api/internal/types"
+	"backend/utls/jwtutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -26,12 +29,31 @@ func NewUserRefreshTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *UserRefreshTokenLogic) UserRefreshToken(req *types.UserRefreshTokenReq) (resp *types.UserRefreshTokenResp, err error) {
-	if req.RefreshToken != "" {
-		return &types.UserRefreshTokenResp{
-			AccessToken:  "eyJhbGciOiJIUzUxMiJ9.newAdmin",
-			RefreshToken: "eyJhbGciOiJIUzUxMiJ9.newAdminRefresh",
-			Expires:      "2030/10/30 23:59:59",
-		}, nil
+	userID, err := helper.GetUserIDFromContext(l.ctx)
+	if err != nil {
+		return nil, err
 	}
-	return nil, errors.New("refresh token error")
+
+	tNow := time.Now()
+	tExpire := tNow.Add(time.Second * time.Duration(l.svcCtx.Config.Auth.AccessExpire))
+
+	mPayload := map[string]any{
+		global.CtxJwtUserIDKey: userID,
+	}
+
+	accessToken, err := jwtutil.GetToken(l.svcCtx.Config.Auth.AccessSecret, tNow.Unix(), tExpire.Unix(), mPayload)
+	if err != nil {
+		return nil, err
+	}
+
+	refreshToken, err := jwtutil.GetToken(l.svcCtx.Config.Auth.AccessSecret, tNow.Unix(), tExpire.Unix()+86400, mPayload)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.UserRefreshTokenResp{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+		Expires:      tExpire.Format("2006/01/02 15:04:05"),
+	}, nil
 }

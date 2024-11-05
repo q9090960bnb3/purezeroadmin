@@ -30,9 +30,7 @@ service user-api {
 }
 
 type (
-	UserRefreshTokenReq {
-		RefreshToken string `json:"refreshToken"`
-	}
+	UserRefreshTokenReq  {}
 	UserRefreshTokenResp {
 		AccessToken  string `json:"accessToken"`
 		RefreshToken string `json:"refreshToken"`
@@ -40,6 +38,9 @@ type (
 	}
 )
 
+@server (
+	jwt: Auth // 开启 jwt 认证
+)
 service user-api {
 	@doc "刷新token"
 	@handler UserRefreshToken
@@ -66,6 +67,9 @@ type (
 	UserRouterReq  {}
 )
 
+@server (
+	jwt: Auth // 开启 jwt 认证
+)
 service user-api {
 	@doc "获取路由"
 	@handler userRouter

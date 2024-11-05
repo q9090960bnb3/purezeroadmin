@@ -1,5 +1,0 @@
-syntax = "v1"
-
-type Base {
-    Success bool `json:"success"`
-}

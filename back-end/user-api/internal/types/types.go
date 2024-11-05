@@ -36,7 +36,6 @@ type UserLoginResp struct {
 }
 
 type UserRefreshTokenReq struct {
-	RefreshToken string `json:"refreshToken"`
 }
 
 type UserRefreshTokenResp struct {

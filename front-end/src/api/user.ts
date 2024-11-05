@@ -42,8 +42,15 @@ export const getLogin = (data?: object) => {
 };
 
 /** 刷新`token` */
-export const refreshTokenApi = (data?: object) => {
-  return http.request<RefreshTokenResult>("post", "/api/refresh-token", {
-    data
-  });
+export const refreshTokenApi = (refreshToken: string) => {
+  return http.request<RefreshTokenResult>(
+    "post",
+    "/api/refresh-token",
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${refreshToken}`
+      }
+    }
+  );
 };
