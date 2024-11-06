@@ -3,12 +3,14 @@ package logic
 import (
 	"context"
 	"errors"
-	"fmt"
 	"time"
 
 	"backend/user-api/global"
 	"backend/user-api/internal/svc"
 	"backend/user-api/internal/types"
+	"backend/utls/arrutil"
+	"backend/utls/codeutil"
+	"backend/utls/jsonutil"
 	"backend/utls/jwtutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -30,32 +32,41 @@ func NewUserLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserLog
 }
 
 func (l *UserLoginLogic) UserLogin(req *types.UserLoginReq) (resp *types.UserLoginResp, err error) {
-	var userID int64
-	resp = &types.UserLoginResp{
-		Username: req.UserName,
+
+	tbUser, err := l.svcCtx.TbUserModel.FindOneByUsername(l.ctx, req.UserName)
+	if err != nil {
+		return nil, err
 	}
-	fmt.Println("req:", req)
-	if req.UserName == "admin" && req.Password == "admin123" {
-		userID = 1
-		resp.Avatar = "https://avatars.githubusercontent.com/u/44761321"
-		resp.Nickname = "小铭"
-		resp.Roles = []string{"admin"}
-		resp.Permissions = []string{"*:*:*"}
-	} else if req.UserName == "common" && req.Password == "common123" {
-		userID = 2
-		resp.Avatar = "https://avatars.githubusercontent.com/u/52823142"
-		resp.Nickname = "小林"
-		resp.Roles = []string{"common"}
-		resp.Permissions = []string{"permission:btn:add", "permission:btn:edit"}
-	} else {
-		return nil, errors.New("登陆失败")
+
+	if tbUser.Password != codeutil.Md5Str(req.Password) {
+		return nil, errors.New("用户或密码错误")
+	}
+
+	roles, err := jsonutil.ToArray[string](tbUser.Roles)
+	if err != nil {
+		return nil, err
+	}
+
+	var permissions []string
+	for _, role := range roles {
+		tbRole, err := l.svcCtx.TbRoleModel.FindOne(l.ctx, role)
+		if err != nil {
+			return nil, err
+		}
+
+		rolePermissions, err := jsonutil.ToArray[string](tbRole.Permissions)
+		if err != nil {
+			return nil, err
+		}
+
+		permissions = arrutil.UniqueConcat(permissions, rolePermissions)
 	}
 
 	tNow := time.Now()
 	tExpire := tNow.Add(time.Second * time.Duration(l.svcCtx.Config.Auth.AccessExpire))
 
 	mPayload := map[string]any{
-		global.CtxJwtUserIDKey: userID,
+		global.CtxJwtUserIDKey: tbUser.UserId,
 	}
 
 	accessToken, err := jwtutil.GetToken(l.svcCtx.Config.Auth.AccessSecret, tNow.Unix(), tExpire.Unix(), mPayload)
@@ -68,9 +79,14 @@ func (l *UserLoginLogic) UserLogin(req *types.UserLoginReq) (resp *types.UserLog
 		return nil, err
 	}
 
-	resp.AccessToken = accessToken
-	resp.RefreshToken = refreshToken
-	resp.Expires = tExpire.Format("2006/01/02 15:04:05")
-
-	return resp, nil
+	return &types.UserLoginResp{
+		Avatar:       tbUser.Avatar,
+		Username:     tbUser.Username,
+		Nickname:     tbUser.Nickname,
+		Roles:        roles,
+		Permissions:  permissions,
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+		Expires:      tExpire.Format("2006/01/02 15:04:05"),
+	}, nil
 }

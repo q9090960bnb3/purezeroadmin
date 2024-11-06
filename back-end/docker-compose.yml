@@ -16,4 +16,4 @@ services:
       MYSQL_INITDB_SKIP_TZINFO: "Asia/Shanghai"
       LANG: C.UTF-8 
     ports:
-      - 5006:3306
+      - 55506:3306

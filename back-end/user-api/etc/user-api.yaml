@@ -6,3 +6,6 @@ Port: 8888
 Auth:
   AccessSecret: "purezeroadminxxx"
   AccessExpire: 10
+
+# mysql dsn
+Dsn: "root:123456@tcp(127.0.0.1:55506)/purezeroadmin?charset=utf8mb4&parseTime=true&loc=Local"
