@@ -1,0 +1,19 @@
+services:
+  mysql:
+    restart: always
+    privileged: true
+    image: mysql:8.0.40
+    container_name: purezeroadmin
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+    command:
+      --default-authentication-plugin=mysql_native_password
+      --explicit_defaults_for_timestamp=true
+      --max_connections=5000
+    environment:  
+      TZ: Asia/Shanghai
+      MYSQL_ROOT_PASSWORD: "123456"
+      MYSQL_INITDB_SKIP_TZINFO: "Asia/Shanghai"
+      LANG: C.UTF-8 
+    ports:
+      - 5006:3306
