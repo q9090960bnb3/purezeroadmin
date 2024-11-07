@@ -45,7 +45,7 @@ func GetAuths(ctx context.Context, svcCtx *svc.ServiceContext, tbUser *models.Tb
 	return roles, permissions, nil
 }
 
-func RouterToData(router *models.TbRouter, isAdmin bool, roles, permissions []string) (routerData *types.RouterData, err error) {
+func RouterToData(svcCtx *svc.ServiceContext, router *models.TbRouter, isAdmin bool, roles, permissions []string) (routerData *types.RouterData, err error) {
 	routerData = &types.RouterData{
 		Path:      router.Path,
 		Name:      router.Name,
@@ -57,13 +57,28 @@ func RouterToData(router *models.TbRouter, isAdmin bool, roles, permissions []st
 		},
 	}
 
+	pass := false
+	for _, role := range roles {
+		getPass, _ := svcCtx.Enforcer.Enforce(role, routerData.Path, "get")
+		if getPass {
+			pass = true
+		}
+	}
+	for _, permission := range permissions {
+		getPass, _ := svcCtx.Enforcer.Enforce(permission, routerData.Path, "get")
+		if getPass {
+			pass = true
+		}
+	}
+
+	if !pass {
+		return nil, nil
+	}
+
 	if router.MetaRoles.Valid {
 		routerData.Meta.Roles, err = jsonutil.ToArray[string](router.MetaRoles.String)
 		if err != nil {
 			return nil, err
-		}
-		if !isAdmin && !arrutil.ContainsAny(roles, routerData.Meta.Roles...) {
-			return nil, nil
 		}
 	}
 
@@ -71,9 +86,6 @@ func RouterToData(router *models.TbRouter, isAdmin bool, roles, permissions []st
 		routerData.Meta.Auths, err = jsonutil.ToArray[string](router.MetaAuths.String)
 		if err != nil {
 			return nil, err
-		}
-		if !isAdmin && !arrutil.ContainsAny(permissions, routerData.Meta.Auths...) {
-			return nil, nil
 		}
 	}
 
