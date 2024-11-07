@@ -56,10 +56,8 @@ func RouterToData(router *models.TbRouter, isAdmin bool, roles, permissions []st
 			Rank:  router.MetaRank,
 		},
 	}
-	fmt.Println("router:", router)
 
 	if router.MetaRoles.Valid {
-		fmt.Println("Roles:", router.MetaRoles.String)
 		routerData.Meta.Roles, err = jsonutil.ToArray[string](router.MetaRoles.String)
 		if err != nil {
 			return nil, err
@@ -70,7 +68,6 @@ func RouterToData(router *models.TbRouter, isAdmin bool, roles, permissions []st
 	}
 
 	if router.MetaAuths.Valid {
-		fmt.Println("Auths:", router.MetaAuths.String)
 		routerData.Meta.Auths, err = jsonutil.ToArray[string](router.MetaAuths.String)
 		if err != nil {
 			return nil, err
