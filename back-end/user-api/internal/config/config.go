@@ -8,5 +8,9 @@ type Config struct {
 		AccessSecret string
 		AccessExpire int64 // 单位为秒
 	}
-	Dsn string // mysql dsn
+	Dsn    string // mysql dsn
+	Casbin struct {
+		ModelFile  string
+		PolicyFile string
+	}
 }

@@ -1,0 +1,15 @@
+p, 1000000, /permission, get
+p, 1010000, /permission/page/index, get
+p, 1020000, /permission/button, get
+p, 1020100, /permission/button/router, get
+p, 1020200, /permission/button/login, get
+
+g, permission:btn:add, 1020100
+g, permission:btn:edit, 1020100
+g, permission:btn:delete, 1020100
+
+g, common,  1000000
+g, common,  1020000
+g, common,  permission:btn:add
+g, common,  permission:btn:edit
+g, common,  1020200

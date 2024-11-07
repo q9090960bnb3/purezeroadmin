@@ -3,10 +3,16 @@ module backend
 go 1.23.0
 
 require (
+	github.com/casbin/casbin/v2 v2.100.0
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/json-iterator/go v1.1.12
 	github.com/zeromicro/go-zero v1.7.3
 	github.com/zeromicro/x v0.0.0-20240408115609-8224c482b07e
+)
+
+require (
+	github.com/bmatcuk/doublestar/v4 v4.6.1 // indirect
+	github.com/casbin/govaluate v1.2.0 // indirect
 )
 
 require (
