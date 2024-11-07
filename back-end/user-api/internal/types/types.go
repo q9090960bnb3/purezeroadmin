@@ -12,11 +12,11 @@ type Meta struct {
 }
 
 type RouterData struct {
-	Path      string       `json:"path"`
-	Name      string       `json:"name,omitempty"`
-	Component string       `json:"component,omitemty"`
-	Meta      Meta         `json:"meta"`
-	Children  []RouterData `json:"children,omitempty"`
+	Path      string        `json:"path"`
+	Name      string        `json:"name,omitempty"`
+	Component string        `json:"component,omitempty"`
+	Meta      Meta          `json:"meta"`
+	Children  []*RouterData `json:"children,omitempty"`
 }
 
 type UserLoginReq struct {

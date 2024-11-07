@@ -9,6 +9,15 @@ func Contains[T comparable](arr []T, v T) bool {
 	return false
 }
 
+func ContainsAny[T comparable](arr []T, values ...T) bool {
+	for _, v := range values {
+		if Contains(arr, v) {
+			return true
+		}
+	}
+	return false
+}
+
 // UniqueConcat 是一个泛型函数，用于拼接两个数组并去除重复值
 func UniqueConcat[T comparable](a, b []T) []T {
 	seen := make(map[T]bool)

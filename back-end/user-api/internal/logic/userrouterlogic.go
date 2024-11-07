@@ -6,6 +6,7 @@ import (
 	"backend/user-api/helper"
 	"backend/user-api/internal/svc"
 	"backend/user-api/internal/types"
+	"backend/utls/arrutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -31,87 +32,95 @@ func (l *UserRouterLogic) UserRouter(req *types.UserRouterReq) (resp []*types.Ro
 		return nil, err
 	}
 
-	if userID == 1 {
-		return []*types.RouterData{
-			{
-				Path: "/permission/page/index",
-				Name: "PermissionPage",
-				Meta: types.Meta{
-					Title: "页面权限",
-					Roles: []string{"admin", "common"},
-				},
-			},
-			{
-				Path: "/permission/button",
-				Meta: types.Meta{
-					Title: "按钮权限",
-					Roles: []string{"admin", "common"},
-				},
-				Children: []types.RouterData{
-					{
-						Path:      "/permission/button/router",
-						Component: "permission/button/index",
-						Name:      "PermissionButtonRouter",
-						Meta: types.Meta{
-							Title: "路由返回按钮权限",
-							Auths: []string{
-								"permission:btn:add",
-								"permission:btn:edit",
-								"permission:btn:delete",
-							},
-						},
-					},
-					{
-						Path:      "/permission/button/login",
-						Component: "permission/button/perms",
-						Name:      "PermissionButtonLogin",
-						Meta: types.Meta{
-							Title: "登录返回按钮权限",
-						},
-					},
-				},
-			},
-		}, nil
+	tbUser, err := l.svcCtx.TbUserModel.FindOne(l.ctx, userID)
+	if err != nil {
+		return nil, err
 	}
 
-	return []*types.RouterData{
-		{
-			Path: "/permission/page/index",
-			Name: "PermissionPage",
-			Meta: types.Meta{
-				Title: "页面权限",
-				Roles: []string{"admin"},
-			},
-		},
-		{
-			Path: "/permission/button",
-			Meta: types.Meta{
-				Title: "按钮权限",
-				Roles: []string{"admin", "common"},
-			},
-			Children: []types.RouterData{
-				{
-					Path:      "/permission/button/router",
-					Component: "permission/button/index",
-					Name:      "PermissionButtonRouter",
-					Meta: types.Meta{
-						Title: "路由返回按钮权限",
-						Auths: []string{
-							"permission:btn:add",
-							"permission:btn:edit",
-							"permission:btn:delete",
-						},
-					},
-				},
-				{
-					Path:      "/permission/button/login",
-					Component: "permission/button/perms",
-					Name:      "PermissionButtonLogin",
-					Meta: types.Meta{
-						Title: "登录返回按钮权限",
-					},
-				},
-			},
-		},
-	}, nil
+	roles, permissions, err := helper.GetAuths(l.ctx, l.svcCtx, tbUser)
+	if err != nil {
+		return nil, err
+	}
+
+	isAdmin := arrutil.Contains(roles, "admin")
+
+	return l.GetRecursionRoutersByParentID(0, isAdmin, roles, permissions)
+}
+
+func (l *UserRouterLogic) GetRouterByID(id int64, isAdmin bool, roles, permissions []string) (routerData *types.RouterData, err error) {
+
+	router, err := l.svcCtx.TbRouterModel.FindOne(l.ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return helper.RouterToData(router, isAdmin, roles, permissions)
+}
+
+func (l *UserLoginLogic) GetRoutersByParentID(parentID int64, isAdmin bool, roles, permissions []string) (routerDatas []*types.RouterData, err error) {
+	routers, err := l.svcCtx.TbRouterModel.FindAllFromParentID(l.ctx, parentID)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, v := range routers {
+		routerData, err := helper.RouterToData(v, isAdmin, roles, permissions)
+		if err != nil {
+			return nil, err
+		}
+		routerDatas = append(routerDatas, routerData)
+	}
+
+	return routerDatas, nil
+}
+
+func (l *UserRouterLogic) UpdateRouterData(routerData *types.RouterData, id int64, isAdmin bool, roles, permissions []string) (err error) {
+	routers, err := l.svcCtx.TbRouterModel.FindAllFromParentID(l.ctx, id)
+	if err != nil {
+		return err
+	}
+
+	for _, v := range routers {
+		child, err := l.GetRecursionRouterByID(v.Id, isAdmin, roles, permissions)
+		if err != nil {
+			return err
+		}
+		if child == nil {
+			continue
+		}
+		routerData.Children = append(routerData.Children, child)
+	}
+	return nil
+}
+
+func (l *UserRouterLogic) GetRecursionRouterByID(id int64, isAdmin bool, roles, permissions []string) (routerData *types.RouterData, err error) {
+
+	routerData, err = l.GetRouterByID(id, isAdmin, roles, permissions)
+	if err != nil {
+		return nil, err
+	}
+
+	err = l.UpdateRouterData(routerData, id, isAdmin, roles, permissions)
+	return routerData, err
+}
+
+func (l *UserRouterLogic) GetRecursionRoutersByParentID(parentID int64, isAdmin bool, roles, permissions []string) (routerDatas []*types.RouterData, err error) {
+	routers, err := l.svcCtx.TbRouterModel.FindAllFromParentID(l.ctx, parentID)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, v := range routers {
+		routerData, err := helper.RouterToData(v, isAdmin, roles, permissions)
+		if err != nil {
+			return nil, err
+		}
+		err = l.UpdateRouterData(routerData, v.Id, isAdmin, roles, permissions)
+		if err != nil {
+			return nil, err
+		}
+		routerDatas = append(routerDatas, routerData)
+	}
+
+	return routerDatas, nil
 }

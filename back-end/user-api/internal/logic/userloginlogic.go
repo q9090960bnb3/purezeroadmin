@@ -6,11 +6,10 @@ import (
 	"time"
 
 	"backend/user-api/global"
+	"backend/user-api/helper"
 	"backend/user-api/internal/svc"
 	"backend/user-api/internal/types"
-	"backend/utls/arrutil"
 	"backend/utls/codeutil"
-	"backend/utls/jsonutil"
 	"backend/utls/jwtutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -42,24 +41,9 @@ func (l *UserLoginLogic) UserLogin(req *types.UserLoginReq) (resp *types.UserLog
 		return nil, errors.New("用户或密码错误")
 	}
 
-	roles, err := jsonutil.ToArray[string](tbUser.Roles)
+	roles, permissions, err := helper.GetAuths(l.ctx, l.svcCtx, tbUser)
 	if err != nil {
 		return nil, err
-	}
-
-	var permissions []string
-	for _, role := range roles {
-		tbRole, err := l.svcCtx.TbRoleModel.FindOne(l.ctx, role)
-		if err != nil {
-			return nil, err
-		}
-
-		rolePermissions, err := jsonutil.ToArray[string](tbRole.Permissions)
-		if err != nil {
-			return nil, err
-		}
-
-		permissions = arrutil.UniqueConcat(permissions, rolePermissions)
 	}
 
 	tNow := time.Now()

@@ -48,11 +48,11 @@ service user-api {
 }
 
 type RouterData {
-	Path      string       `json:"path"`
-	Name      string       `json:"name,omitempty"`
-	Component string       `json:"component,omitemty"`
-	Meta      Meta         `json:"meta"`
-	Children  []RouterData `json:"children,omitempty"`
+	Path      string        `json:"path"`
+	Name      string        `json:"name,omitempty"`
+	Component string        `json:"component,omitempty"`
+	Meta      Meta          `json:"meta"`
+	Children  []*RouterData `json:"children,omitempty"`
 }
 
 type Meta {
@@ -73,6 +73,6 @@ type (
 service user-api {
 	@doc "获取路由"
 	@handler userRouter
-	get /api/get-async-routes (UserRouterReq) returns ([]RouterData)
+	get /api/get-async-routes (UserRouterReq) returns ([]*RouterData)
 }
 

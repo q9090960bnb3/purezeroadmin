@@ -10,6 +10,7 @@ func ToArray[T any](src string) ([]T, error) {
 	return arr, err
 }
 
+// 包含某个元素
 func ArrayContains[T comparable](src string, elem T) (bool, error) {
 	var arr []T
 	err := jsoniter.UnmarshalFromString(src, &arr)
