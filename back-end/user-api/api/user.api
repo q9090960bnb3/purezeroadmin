@@ -76,3 +76,59 @@ service user-api {
 	get /api/get-async-routes (UserRouterReq) returns ([]*RouterData)
 }
 
+type (
+	UserRoleReq  {}
+	UserRoleResp {
+		Id         int64  `json:"id"`
+		Code       string `json:"code"`
+		Name       string `json:"name"`
+		Status     int    `json:"status"`
+		Remark     string `json:"remark"`
+		CreateTime int64  `json:"createTime"`
+		UpdateTime int64  `json:"updateTime"`
+	}
+)
+
+@server (
+	jwt: Auth // 开启 jwt 认证
+)
+service user-api {
+	@doc "获取路由"
+	@handler userRole
+	get /api/role (UserRoleReq) returns ([]*UserRoleResp)
+}
+
+type (
+	UserRoleMenuReq  {}
+	UserRoleMenu {
+		ParentId int64  `json:"parentId"`
+		Id       int64  `json:"id"`
+		MenuType int64  `json:"menuType"`
+		Title    string `json:"title"`
+	}
+)
+
+@server (
+	jwt: Auth // 开启 jwt 认证
+)
+service user-api {
+	@doc "获取菜单"
+	@handler userMenu
+	get /api/role-menu (UserRoleMenuReq) returns ([]*UserRoleMenu)
+}
+
+type (
+	UserRoleMenuIDReq {
+		Id int64 `json:"id"`
+	}
+)
+
+@server (
+	jwt: Auth // 开启 jwt 认证
+)
+service user-api {
+	@doc "获取菜单详情"
+	@handler userMenuID
+	post /api/role-menu-ids (UserRoleMenuIDReq) returns ([]int64)
+}
+

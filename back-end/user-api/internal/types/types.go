@@ -44,5 +44,32 @@ type UserRefreshTokenResp struct {
 	Expires      string `json:"expires"`
 }
 
+type UserRoleMenu struct {
+	ParentId int64  `json:"parentId"`
+	Id       int64  `json:"id"`
+	MenuType int64  `json:"menuType"`
+	Title    string `json:"title"`
+}
+
+type UserRoleMenuIDReq struct {
+	Id int64 `json:"id"`
+}
+
+type UserRoleMenuReq struct {
+}
+
+type UserRoleReq struct {
+}
+
+type UserRoleResp struct {
+	Id         int64  `json:"id"`
+	Code       string `json:"code"`
+	Name       string `json:"name"`
+	Status     int    `json:"status"`
+	Remark     string `json:"remark"`
+	CreateTime int64  `json:"createTime"`
+	UpdateTime int64  `json:"updateTime"`
+}
+
 type UserRouterReq struct {
 }

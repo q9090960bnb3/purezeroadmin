@@ -29,7 +29,7 @@ func GetAuths(ctx context.Context, svcCtx *svc.ServiceContext, tbUser *models.Tb
 	}
 
 	for _, role := range roles {
-		tbRole, err := svcCtx.TbRoleModel.FindOne(ctx, role)
+		tbRole, err := svcCtx.TbRoleModel.FindOneByCode(ctx, role)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -45,7 +45,23 @@ func GetAuths(ctx context.Context, svcCtx *svc.ServiceContext, tbUser *models.Tb
 	return roles, permissions, nil
 }
 
-func RouterToData(svcCtx *svc.ServiceContext, router *models.TbRouter, isAdmin bool, roles, permissions []string) (routerData *types.RouterData, err error) {
+func RouterPass(svcCtx *svc.ServiceContext, router *models.TbRouter, roles, permissions []string) bool {
+	for _, role := range roles {
+		getPass, _ := svcCtx.Enforcer.Enforce(role, router.Path, "get")
+		if getPass {
+			return true
+		}
+	}
+	for _, permission := range permissions {
+		getPass, _ := svcCtx.Enforcer.Enforce(permission, router.Path, "get")
+		if getPass {
+			return true
+		}
+	}
+	return false
+}
+
+func RouterToData(svcCtx *svc.ServiceContext, router *models.TbRouter, roles, permissions []string) (routerData *types.RouterData, err error) {
 	routerData = &types.RouterData{
 		Path:      router.Path,
 		Name:      router.Name,
@@ -57,20 +73,7 @@ func RouterToData(svcCtx *svc.ServiceContext, router *models.TbRouter, isAdmin b
 		},
 	}
 
-	pass := false
-	for _, role := range roles {
-		getPass, _ := svcCtx.Enforcer.Enforce(role, routerData.Path, "get")
-		if getPass {
-			pass = true
-		}
-	}
-	for _, permission := range permissions {
-		getPass, _ := svcCtx.Enforcer.Enforce(permission, routerData.Path, "get")
-		if getPass {
-			pass = true
-		}
-	}
-
+	pass := RouterPass(svcCtx, router, roles, permissions)
 	if !pass {
 		return nil, nil
 	}

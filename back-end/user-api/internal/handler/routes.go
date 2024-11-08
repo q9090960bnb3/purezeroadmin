@@ -46,4 +46,40 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 获取路由
+				Method:  http.MethodGet,
+				Path:    "/api/role",
+				Handler: userRoleHandler(serverCtx),
+			},
+		},
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 获取菜单
+				Method:  http.MethodGet,
+				Path:    "/api/role-menu",
+				Handler: userMenuHandler(serverCtx),
+			},
+		},
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 获取菜单详情
+				Method:  http.MethodPost,
+				Path:    "/api/role-menu-ids",
+				Handler: userMenuIDHandler(serverCtx),
+			},
+		},
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+	)
 }

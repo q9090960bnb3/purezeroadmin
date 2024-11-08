@@ -8,8 +8,8 @@ Content-Type: application/json
 
 HTTP/1.1 200  - OK
 content-type: application/json; charset=utf-8
-traceparent: 00-05745ec33ed7a205b8bcbc1a92cdbc69-6b7b948ecfa8393d-00
-date: Tue, 05 Nov 2024 03:34:50 GMT
+traceparent: 00-982002ecb9436180a78303384bad82d9-d85d39b3851fe20d-00
+date: Fri, 08 Nov 2024 10:11:48 GMT
 content-length: 524
 connection: close
 ###
@@ -32,4 +32,14 @@ content-type: application/json; charset=utf-8
 traceparent: 00-d044cd7d413b644685acff4cea318472-7dd722bffbb32035-00
 date: Tue, 05 Nov 2024 06:31:43 GMT
 content-length: 656
+connection: close
+###
+GET http://localhost:8888/api/role-menu HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzExNDcxMTgsImlhdCI6MTczMTA2MDcwOCwidXNlcklEIjoxfQ.Hdhup4scZOg8do276H_d6bh-mGCsc50r8tz12R3sxRw
+
+HTTP/1.1 200  - OK
+content-type: application/json; charset=utf-8
+traceparent: 00-e2cecc39535a9faa53002505ba48bd2a-b8b4c25c527b0a5e-00
+date: Fri, 08 Nov 2024 10:12:36 GMT
+content-length: 33
 connection: close

@@ -1,6 +1,10 @@
 package models
 
-import "github.com/zeromicro/go-zero/core/stores/sqlx"
+import (
+	"context"
+
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
+)
 
 var _ TbRoleModel = (*customTbRoleModel)(nil)
 
@@ -10,6 +14,7 @@ type (
 	TbRoleModel interface {
 		tbRoleModel
 		withSession(session sqlx.Session) TbRoleModel
+		FindAll(ctx context.Context) ([]*TbRole, error)
 	}
 
 	customTbRoleModel struct {
@@ -26,4 +31,10 @@ func NewTbRoleModel(conn sqlx.SqlConn) TbRoleModel {
 
 func (m *customTbRoleModel) withSession(session sqlx.Session) TbRoleModel {
 	return NewTbRoleModel(sqlx.NewSqlConnFromSession(session))
+}
+
+func (m *customTbRoleModel) FindAll(ctx context.Context) ([]*TbRole, error) {
+	var list []*TbRole
+	err := m.conn.QueryRowsCtx(ctx, &list, "select * from tb_role")
+	return list, err
 }

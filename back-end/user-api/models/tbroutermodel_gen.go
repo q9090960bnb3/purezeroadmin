@@ -38,6 +38,7 @@ type (
 	TbRouter struct {
 		Id        int64          `db:"id"`
 		ParentId  int64          `db:"parent_id"`
+		MenuType  int64          `db:"menu_type"`
 		Path      string         `db:"path"`
 		Name      string         `db:"name"`
 		Component string         `db:"component"`
@@ -79,14 +80,14 @@ func (m *defaultTbRouterModel) FindOne(ctx context.Context, id int64) (*TbRouter
 }
 
 func (m *defaultTbRouterModel) Insert(ctx context.Context, data *TbRouter) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tbRouterRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.ParentId, data.Path, data.Name, data.Component, data.MetaTitle, data.MetaIcon, data.MetaRank, data.MetaRoles, data.MetaAuths, data.CreateTs, data.UpdateTs)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tbRouterRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.ParentId, data.MenuType, data.Path, data.Name, data.Component, data.MetaTitle, data.MetaIcon, data.MetaRank, data.MetaRoles, data.MetaAuths, data.CreateTs, data.UpdateTs)
 	return ret, err
 }
 
 func (m *defaultTbRouterModel) Update(ctx context.Context, data *TbRouter) error {
 	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tbRouterRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.ParentId, data.Path, data.Name, data.Component, data.MetaTitle, data.MetaIcon, data.MetaRank, data.MetaRoles, data.MetaAuths, data.CreateTs, data.UpdateTs, data.Id)
+	_, err := m.conn.ExecCtx(ctx, query, data.ParentId, data.MenuType, data.Path, data.Name, data.Component, data.MetaTitle, data.MetaIcon, data.MetaRank, data.MetaRoles, data.MetaAuths, data.CreateTs, data.UpdateTs, data.Id)
 	return err
 }
 

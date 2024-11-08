@@ -53,7 +53,7 @@ func (l *UserRouterLogic) GetRouterByID(id int64, isAdmin bool, roles, permissio
 		return nil, err
 	}
 
-	return helper.RouterToData(l.svcCtx, router, isAdmin, roles, permissions)
+	return helper.RouterToData(l.svcCtx, router, roles, permissions)
 }
 
 func (l *UserLoginLogic) GetRoutersByParentID(parentID int64, isAdmin bool, roles, permissions []string) (routerDatas []*types.RouterData, err error) {
@@ -63,7 +63,7 @@ func (l *UserLoginLogic) GetRoutersByParentID(parentID int64, isAdmin bool, role
 	}
 
 	for _, v := range routers {
-		routerData, err := helper.RouterToData(l.svcCtx, v, isAdmin, roles, permissions)
+		routerData, err := helper.RouterToData(l.svcCtx, v, roles, permissions)
 		if err != nil {
 			return nil, err
 		}
@@ -109,7 +109,7 @@ func (l *UserRouterLogic) GetRecursionRoutersByParentID(parentID int64, isAdmin 
 	}
 
 	for _, v := range routers {
-		routerData, err := helper.RouterToData(l.svcCtx, v, isAdmin, roles, permissions)
+		routerData, err := helper.RouterToData(l.svcCtx, v, roles, permissions)
 		if err != nil {
 			return nil, err
 		}
