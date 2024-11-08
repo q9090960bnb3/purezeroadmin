@@ -4,6 +4,7 @@ import (
 	"backend/user-api/internal/config"
 	"backend/user-api/models"
 
+	sqladapter "github.com/Blank-Xu/sql-adapter"
 	"github.com/casbin/casbin/v2"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
@@ -19,11 +20,22 @@ type ServiceContext struct {
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	conn := sqlx.NewMysql(c.Dsn)
-	enforcer, err := casbin.NewSyncedEnforcer(c.Casbin.ModelFile, c.Casbin.PolicyFile)
+	db, err := conn.RawDB()
 	if err != nil {
-		logx.Errorf("Error on NewSyncedEnforcer: %+v", err)
+		logx.Errorf("Error on conn.RawDB: %+v", err)
 		return nil
 	}
+	policy, err := sqladapter.NewAdapter(db, "mysql", "casbin_rule")
+	if err != nil {
+		logx.Errorf("Error on sqladapter.NewAdapter: %+v", err)
+		return nil
+	}
+	enforcer, err := casbin.NewSyncedEnforcer(c.Casbin.ModelFile, policy)
+	if err != nil {
+		logx.Errorf("Error on casbin.NewSyncedEnforcer: %+v", err)
+		return nil
+	}
+	// enforcer.AddPolicy("10086", "/10086", "get")
 	return &ServiceContext{
 		Config:        c,
 		TbUserModel:   models.NewTbUserModel(conn),

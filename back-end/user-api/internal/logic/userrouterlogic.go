@@ -48,7 +48,6 @@ func (l *UserRouterLogic) UserRouter(req *types.UserRouterReq) (resp []*types.Ro
 }
 
 func (l *UserRouterLogic) GetRouterByID(id int64, isAdmin bool, roles, permissions []string) (routerData *types.RouterData, err error) {
-
 	router, err := l.svcCtx.TbRouterModel.FindOne(l.ctx, id)
 	if err != nil {
 		return nil, err
@@ -94,7 +93,6 @@ func (l *UserRouterLogic) UpdateRouterData(routerData *types.RouterData, id int6
 }
 
 func (l *UserRouterLogic) GetRecursionRouterByID(id int64, isAdmin bool, roles, permissions []string) (routerData *types.RouterData, err error) {
-
 	routerData, err = l.GetRouterByID(id, isAdmin, roles, permissions)
 	if err != nil {
 		return nil, err
