@@ -70,6 +70,8 @@
     "sortablejs": "^1.15.2",
     "vue": "^3.4.38",
     "vue-router": "^4.4.3",
+    "@zxcvbn-ts/core": "^3.0.4",
+    "cropperjs": "^1.6.2",
     "vue-tippy": "^6.4.4",
     "vue-types": "^5.1.3"
   },

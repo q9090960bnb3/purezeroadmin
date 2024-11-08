@@ -19,15 +19,15 @@ var (
 	tbRoleFieldNames          = builder.RawFieldNames(&TbRole{})
 	tbRoleRows                = strings.Join(tbRoleFieldNames, ",")
 	tbRoleRowsExpectAutoSet   = strings.Join(stringx.Remove(tbRoleFieldNames, "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	tbRoleRowsWithPlaceHolder = strings.Join(stringx.Remove(tbRoleFieldNames, "`name`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	tbRoleRowsWithPlaceHolder = strings.Join(stringx.Remove(tbRoleFieldNames, "`code`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 )
 
 type (
 	tbRoleModel interface {
 		Insert(ctx context.Context, data *TbRole) (sql.Result, error)
-		FindOne(ctx context.Context, name string) (*TbRole, error)
+		FindOne(ctx context.Context, code string) (*TbRole, error)
 		Update(ctx context.Context, data *TbRole) error
-		Delete(ctx context.Context, name string) error
+		Delete(ctx context.Context, code string) error
 	}
 
 	defaultTbRoleModel struct {
@@ -36,7 +36,7 @@ type (
 	}
 
 	TbRole struct {
-		Name        string `db:"name"`
+		Code        string `db:"code"`
 		Permissions string `db:"permissions"`
 		CreateTs    int64  `db:"create_ts"`
 		UpdateTs    int64  `db:"update_ts"`
@@ -50,16 +50,16 @@ func newTbRoleModel(conn sqlx.SqlConn) *defaultTbRoleModel {
 	}
 }
 
-func (m *defaultTbRoleModel) Delete(ctx context.Context, name string) error {
-	query := fmt.Sprintf("delete from %s where `name` = ?", m.table)
-	_, err := m.conn.ExecCtx(ctx, query, name)
+func (m *defaultTbRoleModel) Delete(ctx context.Context, code string) error {
+	query := fmt.Sprintf("delete from %s where `code` = ?", m.table)
+	_, err := m.conn.ExecCtx(ctx, query, code)
 	return err
 }
 
-func (m *defaultTbRoleModel) FindOne(ctx context.Context, name string) (*TbRole, error) {
-	query := fmt.Sprintf("select %s from %s where `name` = ? limit 1", tbRoleRows, m.table)
+func (m *defaultTbRoleModel) FindOne(ctx context.Context, code string) (*TbRole, error) {
+	query := fmt.Sprintf("select %s from %s where `code` = ? limit 1", tbRoleRows, m.table)
 	var resp TbRole
-	err := m.conn.QueryRowCtx(ctx, &resp, query, name)
+	err := m.conn.QueryRowCtx(ctx, &resp, query, code)
 	switch err {
 	case nil:
 		return &resp, nil
@@ -72,13 +72,13 @@ func (m *defaultTbRoleModel) FindOne(ctx context.Context, name string) (*TbRole,
 
 func (m *defaultTbRoleModel) Insert(ctx context.Context, data *TbRole) (sql.Result, error) {
 	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?)", m.table, tbRoleRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.Name, data.Permissions, data.CreateTs, data.UpdateTs)
+	ret, err := m.conn.ExecCtx(ctx, query, data.Code, data.Permissions, data.CreateTs, data.UpdateTs)
 	return ret, err
 }
 
 func (m *defaultTbRoleModel) Update(ctx context.Context, data *TbRole) error {
-	query := fmt.Sprintf("update %s set %s where `name` = ?", m.table, tbRoleRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.Permissions, data.CreateTs, data.UpdateTs, data.Name)
+	query := fmt.Sprintf("update %s set %s where `code` = ?", m.table, tbRoleRowsWithPlaceHolder)
+	_, err := m.conn.ExecCtx(ctx, query, data.Permissions, data.CreateTs, data.UpdateTs, data.Code)
 	return err
 }
 
