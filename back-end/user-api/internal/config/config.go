@@ -10,7 +10,6 @@ type Config struct {
 	}
 	Dsn    string // mysql dsn
 	Casbin struct {
-		ModelFile  string
-		PolicyFile string
+		ModelFile string
 	}
 }
