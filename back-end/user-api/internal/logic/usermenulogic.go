@@ -41,14 +41,14 @@ func (l *UserMenuLogic) UserMenu(req *types.UserRoleMenuReq) (resp []*types.User
 		return nil, err
 	}
 
-	err = l.GetMenuByParentID(0, roles, permissions, resp)
+	err = l.GetMenuByParentID(0, roles, permissions, &resp)
 	if err != nil {
 		return nil, err
 	}
 	return resp, nil
 }
 
-func (l *UserMenuLogic) GetMenuByParentID(parentID int64, roles, permissions []string, roleMenus []*types.UserRoleMenu) (err error) {
+func (l *UserMenuLogic) GetMenuByParentID(parentID int64, roles, permissions []string, roleMenus *[]*types.UserRoleMenu) (err error) {
 	routers, err := l.svcCtx.TbRouterModel.FindAllFromParentID(l.ctx, parentID)
 	if err != nil {
 		return err
@@ -56,7 +56,7 @@ func (l *UserMenuLogic) GetMenuByParentID(parentID int64, roles, permissions []s
 
 	for _, v := range routers {
 		if pass := helper.RouterPass(l.svcCtx, v, roles, permissions); pass {
-			roleMenus = append(roleMenus, &types.UserRoleMenu{
+			*roleMenus = append(*roleMenus, &types.UserRoleMenu{
 				ParentId: v.ParentId,
 				Id:       v.Id,
 				MenuType: v.MenuType,

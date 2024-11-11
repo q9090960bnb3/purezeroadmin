@@ -51,7 +51,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		[]rest.Route{
 			{
 				// 获取路由
-				Method:  http.MethodGet,
+				Method:  http.MethodPost,
 				Path:    "/api/role",
 				Handler: userRoleHandler(serverCtx),
 			},

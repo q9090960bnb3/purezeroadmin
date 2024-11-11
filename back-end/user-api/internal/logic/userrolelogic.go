@@ -24,22 +24,27 @@ func NewUserRoleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserRole
 	}
 }
 
-func (l *UserRoleLogic) UserRole(req *types.UserRoleReq) (resp []*types.UserRoleResp, err error) {
-	tbRoles, err := l.svcCtx.TbRoleModel.FindAll(l.ctx)
+func (l *UserRoleLogic) UserRole(req *types.UserRoleReq) (resp *types.UserRoleResp, err error) {
+	list, total, err := l.svcCtx.TbRoleModel.FindList(l.ctx, req.Name, req.Code, req.Status, req.Page, req.PageSize)
 	if err != nil {
 		return nil, err
 	}
 
-	for _, tbRole := range tbRoles {
-		resp = append(resp, &types.UserRoleResp{
+	resp = &types.UserRoleResp{
+		List:  make([]*types.UserRoleData, len(list)),
+		Total: total,
+	}
+
+	for i, tbRole := range list {
+		resp.List[i] = &types.UserRoleData{
 			Id:         tbRole.Id,
 			Code:       tbRole.Code,
 			Name:       tbRole.Name,
-			Status:     int(tbRole.Status),
+			Status:     tbRole.Status,
 			Remark:     tbRole.Remark,
 			CreateTime: tbRole.CreateTs,
 			UpdateTime: tbRole.UpdateTs,
-		})
+		}
 	}
 
 	return resp, nil

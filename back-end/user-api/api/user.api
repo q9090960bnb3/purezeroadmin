@@ -77,15 +77,25 @@ service user-api {
 }
 
 type (
-	UserRoleReq  {}
-	UserRoleResp {
+	UserRoleReq {
+		Name     string `json:"name,optional"`
+		Code     string `json:"code,optional"`
+		Status   string `json:"status,optional"`
+		Page     int64  `json:"page,default=1"`
+		PageSize int64  `json:"pageSize,default=10"`
+	}
+	UserRoleData {
 		Id         int64  `json:"id"`
 		Code       string `json:"code"`
 		Name       string `json:"name"`
-		Status     int    `json:"status"`
+		Status     int64  `json:"status"`
 		Remark     string `json:"remark"`
 		CreateTime int64  `json:"createTime"`
 		UpdateTime int64  `json:"updateTime"`
+	}
+	UserRoleResp {
+		List  []*UserRoleData `json:"list"`
+		Total int64           `json:"total"`
 	}
 )
 
@@ -95,7 +105,7 @@ type (
 service user-api {
 	@doc "获取路由"
 	@handler userRole
-	get /api/role (UserRoleReq) returns ([]*UserRoleResp)
+	post /api/role (UserRoleReq) returns ([]*UserRoleResp)
 }
 
 type (
