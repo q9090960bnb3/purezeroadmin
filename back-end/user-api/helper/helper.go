@@ -13,13 +13,54 @@ import (
 )
 
 func GetUserIDFromContext(ctx context.Context) (int64, error) {
-
 	uid, ok := ctx.Value(global.CtxJwtUserIDKey).(json.Number)
 	if !ok {
 		return 0, fmt.Errorf("jwt has no userID")
 	}
 
 	return uid.Int64()
+}
+
+func GetAuthsInfos(ctx context.Context, svcCtx *svc.ServiceContext) (tbUser *models.TbUser, mTbRole map[int64]*models.TbRole, err error) {
+	userID, err := GetUserIDFromContext(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	tbUser, err = svcCtx.TbUserModel.FindOne(ctx, userID)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	mTbRole = make(map[int64]*models.TbRole)
+
+	if tbUser.Username == "admin" {
+		tbRoles, err := svcCtx.TbRoleModel.FindAll(ctx)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		for _, tbRole := range tbRoles {
+			mTbRole[tbRole.Id] = tbRole
+		}
+		return tbUser, mTbRole, nil
+	}
+
+	roles, err := jsonutil.ToArray[string](tbUser.Roles)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	for _, role := range roles {
+		tbRole, err := svcCtx.TbRoleModel.FindOneByCode(ctx, role)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		mTbRole[tbRole.Id] = tbRole
+	}
+
+	return tbUser, mTbRole, nil
 }
 
 func GetAuths(ctx context.Context, svcCtx *svc.ServiceContext, tbUser *models.TbUser) (roles, permissions []string, err error) {

@@ -47,7 +47,7 @@ func (l *UserRouterLogic) UserRouter(req *types.UserRouterReq) (resp []*types.Ro
 	return l.GetRecursionRoutersByParentID(0, isAdmin, roles, permissions)
 }
 
-func (l *UserRouterLogic) GetRouterByID(id int64, isAdmin bool, roles, permissions []string) (routerData *types.RouterData, err error) {
+func (l *UserRouterLogic) GetRouterByID(id int64, roles, permissions []string) (routerData *types.RouterData, err error) {
 	router, err := l.svcCtx.TbRouterModel.FindOne(l.ctx, id)
 	if err != nil {
 		return nil, err
@@ -73,14 +73,14 @@ func (l *UserLoginLogic) GetRoutersByParentID(parentID int64, isAdmin bool, role
 	return routerDatas, nil
 }
 
-func (l *UserRouterLogic) UpdateRouterData(routerData *types.RouterData, id int64, isAdmin bool, roles, permissions []string) (err error) {
+func (l *UserRouterLogic) UpdateRouterData(routerData *types.RouterData, id int64, roles, permissions []string) (err error) {
 	routers, err := l.svcCtx.TbRouterModel.FindAllFromParentID(l.ctx, id)
 	if err != nil {
 		return err
 	}
 
 	for _, v := range routers {
-		child, err := l.GetRecursionRouterByID(v.Id, isAdmin, roles, permissions)
+		child, err := l.GetRecursionRouterByID(v.Id, roles, permissions)
 		if err != nil {
 			return err
 		}
@@ -92,13 +92,13 @@ func (l *UserRouterLogic) UpdateRouterData(routerData *types.RouterData, id int6
 	return nil
 }
 
-func (l *UserRouterLogic) GetRecursionRouterByID(id int64, isAdmin bool, roles, permissions []string) (routerData *types.RouterData, err error) {
-	routerData, err = l.GetRouterByID(id, isAdmin, roles, permissions)
+func (l *UserRouterLogic) GetRecursionRouterByID(id int64, roles, permissions []string) (routerData *types.RouterData, err error) {
+	routerData, err = l.GetRouterByID(id, roles, permissions)
 	if err != nil {
 		return nil, err
 	}
 
-	err = l.UpdateRouterData(routerData, id, isAdmin, roles, permissions)
+	err = l.UpdateRouterData(routerData, id, roles, permissions)
 	return routerData, err
 }
 
@@ -113,7 +113,7 @@ func (l *UserRouterLogic) GetRecursionRoutersByParentID(parentID int64, isAdmin 
 		if err != nil {
 			return nil, err
 		}
-		err = l.UpdateRouterData(routerData, v.Id, isAdmin, roles, permissions)
+		err = l.UpdateRouterData(routerData, v.Id, roles, permissions)
 		if err != nil {
 			return nil, err
 		}

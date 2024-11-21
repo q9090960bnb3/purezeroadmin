@@ -16,7 +16,7 @@ type (
 		tbRoleModel
 		withSession(session sqlx.Session) TbRoleModel
 		FindAll(ctx context.Context) ([]*TbRole, error)
-		FindList(ctx context.Context, name, code, status string, page, pageSize int64) ([]*TbRole, int64, error)
+		FindList(ctx context.Context, name, code string, status *int64, page, pageSize int64) ([]*TbRole, int64, error)
 	}
 
 	customTbRoleModel struct {
@@ -41,7 +41,7 @@ func (m *customTbRoleModel) FindAll(ctx context.Context) ([]*TbRole, error) {
 	return list, err
 }
 
-func (m *customTbRoleModel) FindList(ctx context.Context, name, code, status string, page, pageSize int64) ([]*TbRole, int64, error) {
+func (m *customTbRoleModel) FindList(ctx context.Context, name, code string, status *int64, page, pageSize int64) ([]*TbRole, int64, error) {
 	base := ""
 	needAnd := false
 	if name != "" {
@@ -54,11 +54,11 @@ func (m *customTbRoleModel) FindList(ctx context.Context, name, code, status str
 		}
 		base += fmt.Sprintf("code = '%s'", code)
 	}
-	if status != "" {
+	if status != nil {
 		if needAnd {
 			base += " and "
 		}
-		base += fmt.Sprintf("status = %s", status)
+		base += fmt.Sprintf("status = %v", *status)
 	}
 	if base != "" {
 		base = " where " + base

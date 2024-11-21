@@ -15,6 +15,7 @@ type (
 		tbRouterModel
 		withSession(session sqlx.Session) TbRouterModel
 		FindAllFromParentID(ctx context.Context, parentID int64) ([]*TbRouter, error)
+		FindAll(ctx context.Context) ([]*TbRouter, error)
 	}
 
 	customTbRouterModel struct {
@@ -36,5 +37,11 @@ func (m *customTbRouterModel) withSession(session sqlx.Session) TbRouterModel {
 func (m *customTbRouterModel) FindAllFromParentID(ctx context.Context, parentID int64) ([]*TbRouter, error) {
 	var resp []*TbRouter
 	err := m.conn.QueryRowsCtx(ctx, &resp, "select * from tb_router where parent_id = ?", parentID)
+	return resp, err
+}
+
+func (m *customTbRouterModel) FindAll(ctx context.Context) ([]*TbRouter, error) {
+	var resp []*TbRouter
+	err := m.conn.QueryRowsCtx(ctx, &resp, "select * from tb_router")
 	return resp, err
 }

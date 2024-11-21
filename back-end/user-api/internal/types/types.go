@@ -71,7 +71,7 @@ type UserRoleMenuReq struct {
 type UserRoleReq struct {
 	Name     string `json:"name,optional"`
 	Code     string `json:"code,optional"`
-	Status   string `json:"status,optional"`
+	Status   *int64 `json:"status,optional"`
 	Page     int64  `json:"page,default=1"`
 	PageSize int64  `json:"pageSize,default=10"`
 }
