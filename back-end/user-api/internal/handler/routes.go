@@ -82,4 +82,34 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 增加角色
+				Method:  http.MethodPost,
+				Path:    "/api/roleopt",
+				Handler: UserRoleCreateHandler(serverCtx),
+			},
+			{
+				// 删除角色
+				Method:  http.MethodDelete,
+				Path:    "/api/roleopt",
+				Handler: UserRoleDeleteHandler(serverCtx),
+			},
+			{
+				// 修改角色
+				Method:  http.MethodPut,
+				Path:    "/api/roleopt",
+				Handler: UserRoleUpdateHandler(serverCtx),
+			},
+			{
+				// 修改角色某个属性
+				Method:  http.MethodPatch,
+				Path:    "/api/roleopt",
+				Handler: UserRolePatchHandler(serverCtx),
+			},
+		},
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+	)
 }

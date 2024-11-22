@@ -142,3 +142,48 @@ service user-api {
 	post /api/role-menu-ids (UserRoleMenuIDReq) returns ([]int64)
 }
 
+type (
+	UserRoleCreateReq {
+		Name   string `json:"name"`
+		Code   string `json:"code"`
+		Remark string `json:"remark"`
+	}
+	UserRoleDeleteReq {
+		Id int64 `json:"id"`
+	}
+	UserRoleUpdateReq {
+		Id     int64  `json:"id"`
+		Code   string `json:"code"`
+		Name   string `json:"name"`
+		Remark string `json:"remark"`
+	}
+	UserRolePatchReq {
+		Id     int64   `json:"id"`
+		Code   *string `json:"code,optional"`
+		Name   *string `json:"name,optional"`
+		Status *int64  `json:"status,optional"`
+		Remark *string `json:"remark,optional"`
+	}
+)
+
+@server (
+	jwt: Auth
+)
+service user-api {
+	@doc "增加角色"
+	@handler UserRoleCreate
+	post /api/roleopt (UserRoleCreateReq) returns (string)
+
+	@doc "删除角色"
+	@handler UserRoleDelete
+	delete /api/roleopt (UserRoleDeleteReq) returns (string)
+
+	@doc "修改角色"
+	@handler UserRoleUpdate
+	put /api/roleopt (UserRoleUpdateReq) returns (string)
+
+	@doc "修改角色某个属性"
+	@handler UserRolePatch
+	patch /api/roleopt (UserRolePatchReq) returns (string)
+}
+

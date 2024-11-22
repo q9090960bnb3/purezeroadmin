@@ -8,10 +8,19 @@ import { addDialog } from "@/components/ReDialog";
 import type { FormItemProps } from "../utils/types";
 import type { PaginationProps } from "@pureadmin/table";
 import { getKeyList, deviceDetection } from "@pureadmin/utils";
-import { getRoleList, getRoleMenu, getRoleMenuIds } from "@/api/system";
+import {
+  getRoleList,
+  getRoleMenu,
+  getRoleMenuIds,
+  addRole,
+  updateRole,
+  updatePartRole,
+  deleteRole
+} from "@/api/system";
 import { type Ref, reactive, ref, onMounted, h, toRaw, watch } from "vue";
+import type { ElTree } from "element-plus";
 
-export function useRole(treeRef: Ref) {
+export function useRole(treeRef: Ref<typeof ElTree>) {
   const form = reactive({
     name: "",
     code: "",
@@ -24,7 +33,7 @@ export function useRole(treeRef: Ref) {
   const treeData = ref([]);
   const isShow = ref(false);
   const loading = ref(true);
-  const isLinkage = ref(false);
+  const isLinkage = ref(true);
   const treeSearchValue = ref();
   const switchLoadMap = ref({});
   const isExpandAll = ref(false);
@@ -118,6 +127,11 @@ export function useRole(treeRef: Ref) {
       }
     )
       .then(() => {
+        const data = {
+          id: row.id,
+          status: row.status
+        };
+
         switchLoadMap.value[index] = Object.assign(
           {},
           switchLoadMap.value[index],
@@ -125,7 +139,8 @@ export function useRole(treeRef: Ref) {
             loading: true
           }
         );
-        setTimeout(() => {
+
+        updatePartRole(data).then(res => {
           switchLoadMap.value[index] = Object.assign(
             {},
             switchLoadMap.value[index],
@@ -133,10 +148,14 @@ export function useRole(treeRef: Ref) {
               loading: false
             }
           );
-          message(`已${row.status === 0 ? "停用" : "启用"}${row.name}`, {
-            type: "success"
-          });
-        }, 300);
+          if (res.code === 0) {
+            message(`已${row.status === 0 ? "停用" : "启用"}${row.name}`, {
+              type: "success"
+            });
+          } else {
+            message(res.msg, { type: "error" });
+          }
+        });
       })
       .catch(() => {
         row.status === 0 ? (row.status = 1) : (row.status = 0);
@@ -144,8 +163,16 @@ export function useRole(treeRef: Ref) {
   }
 
   function handleDelete(row) {
-    message(`您删除了角色名称为${row.name}的这条数据`, { type: "success" });
-    onSearch();
+    deleteRole({
+      id: row.id
+    }).then(res => {
+      if (res.code === 0) {
+        message(`您删除了角色名称为${row.name}的这条数据`, { type: "success" });
+      } else {
+        message(res.msg, { type: "error" });
+      }
+      onSearch();
+    });
   }
 
   function handleSizeChange(val: number) {
@@ -170,9 +197,9 @@ export function useRole(treeRef: Ref) {
     dataList.value = data.list;
     pagination.total = data.total;
 
-    setTimeout(() => {
-      loading.value = false;
-    }, 500);
+    // setTimeout(() => {
+    loading.value = false;
+    // }, 500);
   }
 
   const resetForm = formEl => {
@@ -213,10 +240,14 @@ export function useRole(treeRef: Ref) {
             // 表单规则校验通过
             if (title === "新增") {
               // 实际开发先调用新增接口，再进行下面操作
-              chores();
+              addRole(curData).then(() => {
+                chores();
+              });
             } else {
               // 实际开发先调用修改接口，再进行下面操作
-              chores();
+              updateRole(curData).then(() => {
+                chores();
+              });
             }
           }
         });
@@ -250,7 +281,8 @@ export function useRole(treeRef: Ref) {
   function handleSave() {
     const { id, name } = curRow.value;
     // 根据用户 id 调用实际项目中菜单权限修改接口
-    console.log(id, treeRef.value.getCheckedKeys());
+    // console.log("row:", curRow);
+    // console.log(id, "//", treeRef.value.getCheckedKeys());
     message(`角色名称为${name}的菜单权限修改成功`, {
       type: "success"
     });

@@ -1,7 +1,8 @@
 import { http } from "@/utils/http";
 
 type Result = {
-  success: boolean;
+  code: number;
+  msg: string;
   data?: Array<any>;
 };
 
@@ -82,4 +83,24 @@ export const getRoleMenu = (data?: object) => {
 /** 获取角色管理-权限-菜单权限-根据角色 id 查对应菜单 */
 export const getRoleMenuIds = (data?: object) => {
   return http.request<Result>("post", "/api/role-menu-ids", { data });
+};
+
+// 增加角色
+export const addRole = (data?: object) => {
+  return http.request<Result>("post", "/api/roleopt", { data });
+};
+
+// 删除角色
+export const deleteRole = (data?: object) => {
+  return http.request<Result>("delete", "/api/roleopt", { data });
+};
+
+// 修改角色
+export const updateRole = (data?: object) => {
+  return http.request<Result>("put", "/api/roleopt", { data });
+};
+
+// 部分更新角色
+export const updatePartRole = (data?: object) => {
+  return http.request<Result>("patch", "/api/roleopt", { data });
 };

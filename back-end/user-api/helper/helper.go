@@ -9,6 +9,7 @@ import (
 	"backend/utls/jsonutil"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 )
 
@@ -21,20 +22,38 @@ func GetUserIDFromContext(ctx context.Context) (int64, error) {
 	return uid.Int64()
 }
 
-func GetAuthsInfos(ctx context.Context, svcCtx *svc.ServiceContext) (tbUser *models.TbUser, mTbRole map[int64]*models.TbRole, err error) {
+func GetUser(ctx context.Context, svcCtx *svc.ServiceContext) (isAdmin bool, tbUser *models.TbUser, err error) {
 	userID, err := GetUserIDFromContext(ctx)
 	if err != nil {
-		return nil, nil, err
+		return false, nil, err
 	}
 
 	tbUser, err = svcCtx.TbUserModel.FindOne(ctx, userID)
 	if err != nil {
+		return false, nil, err
+	}
+	return tbUser.Username == "admin", tbUser, nil
+}
+
+func CheckAdmin(ctx context.Context, svcCtx *svc.ServiceContext) (tbUser *models.TbUser, err error) {
+	isAdmin, _, err := GetUser(ctx, svcCtx)
+	if err != nil {
+		return nil, err
+	}
+	if !isAdmin {
+		return nil, errors.New("必须Admin权限")
+	}
+	return tbUser, nil
+}
+
+func GetAuthsInfos(ctx context.Context, svcCtx *svc.ServiceContext) (tbUser *models.TbUser, mTbRole map[int64]*models.TbRole, err error) {
+	isAdmin, tbUser, err := GetUser(ctx, svcCtx)
+	if err != nil {
 		return nil, nil, err
 	}
-
 	mTbRole = make(map[int64]*models.TbRole)
 
-	if tbUser.Username == "admin" {
+	if isAdmin {
 		tbRoles, err := svcCtx.TbRoleModel.FindAll(ctx)
 		if err != nil {
 			return nil, nil, err

@@ -44,6 +44,12 @@ type UserRefreshTokenResp struct {
 	Expires      string `json:"expires"`
 }
 
+type UserRoleCreateReq struct {
+	Name   string `json:"name"`
+	Code   string `json:"code"`
+	Remark string `json:"remark"`
+}
+
 type UserRoleData struct {
 	Id         int64  `json:"id"`
 	Code       string `json:"code"`
@@ -52,6 +58,10 @@ type UserRoleData struct {
 	Remark     string `json:"remark"`
 	CreateTime int64  `json:"createTime"`
 	UpdateTime int64  `json:"updateTime"`
+}
+
+type UserRoleDeleteReq struct {
+	Id int64 `json:"id"`
 }
 
 type UserRoleMenu struct {
@@ -68,6 +78,14 @@ type UserRoleMenuIDReq struct {
 type UserRoleMenuReq struct {
 }
 
+type UserRolePatchReq struct {
+	Id     int64   `json:"id"`
+	Code   *string `json:"code,optional"`
+	Name   *string `json:"name,optional"`
+	Status *int64  `json:"status,optional"`
+	Remark *string `json:"remark,optional"`
+}
+
 type UserRoleReq struct {
 	Name     string `json:"name,optional"`
 	Code     string `json:"code,optional"`
@@ -79,6 +97,13 @@ type UserRoleReq struct {
 type UserRoleResp struct {
 	List  []*UserRoleData `json:"list"`
 	Total int64           `json:"total"`
+}
+
+type UserRoleUpdateReq struct {
+	Id     int64  `json:"id"`
+	Code   string `json:"code"`
+	Name   string `json:"name"`
+	Remark string `json:"remark"`
 }
 
 type UserRouterReq struct {
