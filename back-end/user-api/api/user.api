@@ -187,3 +187,19 @@ service user-api {
 	patch /api/roleopt (UserRolePatchReq) returns (string)
 }
 
+type (
+	UserRoleModifyReq {
+		Id  int64   `json:"id"` // role id
+		Ids []int64 `json:"ids"` // router ids
+	}
+)
+
+@server (
+	jwt: Auth
+)
+service user-api {
+	@doc "增加角色"
+	@handler UserRoleModify
+	post /api/rolemodify (UserRoleModifyReq) returns (string)
+}
+

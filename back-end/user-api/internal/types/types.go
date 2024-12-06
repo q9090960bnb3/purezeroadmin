@@ -78,6 +78,11 @@ type UserRoleMenuIDReq struct {
 type UserRoleMenuReq struct {
 }
 
+type UserRoleModifyReq struct {
+	Id  int64   `json:"id"`  // role id
+	Ids []int64 `json:"ids"` // router ids
+}
+
 type UserRolePatchReq struct {
 	Id     int64   `json:"id"`
 	Code   *string `json:"code,optional"`

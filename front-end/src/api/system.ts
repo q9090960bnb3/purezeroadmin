@@ -104,3 +104,8 @@ export const updateRole = (data?: object) => {
 export const updatePartRole = (data?: object) => {
   return http.request<Result>("patch", "/api/roleopt", { data });
 };
+
+// 更改角色权限
+export const modifyRole = (data?: object) => {
+  return http.request<Result>("post", "/api/rolemodify", { data });
+};

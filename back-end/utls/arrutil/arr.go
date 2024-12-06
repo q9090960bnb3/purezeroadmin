@@ -41,3 +41,13 @@ func UniqueConcat[T comparable](a, b []T) []T {
 
 	return result
 }
+
+// RemoveItem 从数组中移除指定元素
+func RemoveItem[T comparable](arr []T, item T) []T {
+	for i, v := range arr {
+		if v == item {
+			return append(arr[:i], arr[i+1:]...)
+		}
+	}
+	return arr
+}

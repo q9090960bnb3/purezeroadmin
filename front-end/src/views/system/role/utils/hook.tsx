@@ -15,7 +15,8 @@ import {
   addRole,
   updateRole,
   updatePartRole,
-  deleteRole
+  deleteRole,
+  modifyRole
 } from "@/api/system";
 import { type Ref, reactive, ref, onMounted, h, toRaw, watch } from "vue";
 import type { ElTree } from "element-plus";
@@ -281,10 +282,17 @@ export function useRole(treeRef: Ref<typeof ElTree>) {
   function handleSave() {
     const { id, name } = curRow.value;
     // 根据用户 id 调用实际项目中菜单权限修改接口
-    // console.log("row:", curRow);
-    // console.log(id, "//", treeRef.value.getCheckedKeys());
-    message(`角色名称为${name}的菜单权限修改成功`, {
-      type: "success"
+    modifyRole({
+      id,
+      ids: treeRef.value.getCheckedKeys()
+    }).then(res => {
+      if (res.code === 0) {
+        message(`角色名称为${name}的菜单权限修改成功`, {
+          type: "success"
+        });
+      } else {
+        message(res.msg, { type: "error" });
+      }
     });
   }
 
